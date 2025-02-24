@@ -1,0 +1,112 @@
+{
+	"info": {
+		"_postman_id": "4b71441d-6b87-4fbe-bc60-b8309accc4b6",
+		"name": "employee",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15497739"
+	},
+	"item": [
+		{
+			"name": "Employees",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array\", function () {\r",
+							"    let jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Employees have required properties\", function () {\r",
+							"    let jsonData = pm.response.json();\r",
+							"    jsonData.forEach(emp => {\r",
+							"        pm.expect(emp).to.have.property(\"id\");\r",
+							"        pm.expect(emp).to.have.property(\"name\");\r",
+							"        pm.expect(emp).to.have.property(\"position\");\r",
+							"        pm.expect(emp).to.have.property(\"department\");\r",
+							"        pm.expect(emp).to.have.property(\"salary\");\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check first employee\", function () {\r",
+							"    let jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[0].id).to.equal(1);\r",
+							"    pm.expect(jsonData[0].name).to.equal(\"Dar Vader\");\r",
+							"    pm.expect(jsonData[0].position).to.equal(\"Director\");\r",
+							"    pm.expect(jsonData[0].department).to.equal(\"Sales\");\r",
+							"    pm.expect(jsonData[0].salary).to.equal(10000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check second employee\", function () {\r",
+							"    let jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[1].id).to.equal(2);\r",
+							"    pm.expect(jsonData[1].name).to.equal(\"Youda\");\r",
+							"    pm.expect(jsonData[1].position).to.equal(\"Manager\");\r",
+							"    pm.expect(jsonData[1].department).to.equal(\"Sales\");\r",
+							"    pm.expect(jsonData[1].salary).to.equal(5500);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/employees",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"employees"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New employee",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "// { \r\n//     \"name\": \"Dar Vader\", \r\n//     \"position\": \"Director\", \r\n//     \"department\": \"Sales\", \r\n//     \"salary\": 10000 \r\n// }\r\n\r\n{ \r\n    \"name\": \"Youda\", \r\n    \"position\": \"Manager\", \r\n    \"department\": \"Sales\", \r\n    \"salary\": 5500 \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/employees",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"employees"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
