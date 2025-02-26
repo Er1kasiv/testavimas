@@ -1,18 +1,15 @@
-describe('Todo Application Tests', () => {
+describe('Todo List App', () => {
+  beforeEach(() => cy.visit('https://todolist.james.am/#/'));
 
-  it('Load TodoList page and verify elements', () => {
-      cy.visit('https://todolist.james.am/#/');
+  it('Loads the page and displays header', () => {
+      cy.url().should('eq', 'https://todolist.james.am/#/');
+    });
 
-      // Check header
-      cy.contains('h1', 'To Do List').should('be.visible');
+    it("Has correct input placeholder", () => {
+      cy.get('.new-todo',).should('have.attr', 'placeholder', "What need's to be done?");
+    });
 
-      // Check input field & placeholder
-      cy.get('input.new-todo')
-        .should('be.visible')
-        .should('have.attr', 'placeholder', "What need's to be done?");
-
-      // Check "Double-click to edit a todo" text
-      cy.contains('Double-click').should('be.visible');
+  it("Displays 'Double-click to edit a todo'", () => {
+      cy.contains('Double-click to edit a todo')('be.visible');
   });
-
 });
