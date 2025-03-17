@@ -1,0 +1,1155 @@
+{
+	"info": {
+		"_postman_id": "3b333bca-a615-4cc2-a932-dc49289f8802",
+		"name": "UsserManagement",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15497739"
+	},
+	"item": [
+		{
+			"name": "Register new user",
+			"item": [
+				{
+					"name": "Register new user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate a unique username  by appending a timestamp\r",
+									"const uniqueUsername = \"reg_test_user_\" + Date.now();\r",
+									"// Generate a unique password  by appending a timestamp\r",
+									"const uniquePassword = \"reg_psw\" + Date.now();\r",
+									"\r",
+									"pm.collectionVariables.set(\"registerUserName\", uniqueUsername)\r",
+									"pm.collectionVariables.set(\"registerPassword\", uniquePassword)\r",
+									"\r",
+									"// Just print in order to check if we got value of variables by name:\r",
+									"// console.log(pm.collectionVariables.get(\"registerLoginUserName\"))\r",
+									"// console.log(pm.collectionVariables.get(\"registerLoginPassword\"))"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const variableUserName = pm.collectionVariables.get(\"registerUserName\");\r",
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"\r",
+									"  pm.expect(responseData).to.be.an('object');\r",
+									"  pm.expect(responseData.message).to.exist.and.to.be.a('string')\r",
+									"    .to.equal(\"User registered successfully\");\r",
+									"\r",
+									"  pm.expect(responseData.user).to.exist.and.to.be.an('object');\r",
+									"  \r",
+									"  pm.expect(responseData.user.username).to.exist.and.to.be.a('string')\r",
+									"    .and.to.have.lengthOf.at.least(1, \"Username should not be empty\")\r",
+									"    .to.equal(variableUserName);\r",
+									"\r",
+									"  pm.expect(responseData.user.fullName).to.exist.and.to.be.a('string')\r",
+									"    .and.to.have.lengthOf.at.least(1, \"Full name should not be empty\")\r",
+									"    .to.equal(\"Vardenis Pavardenis\");\r",
+									"\r",
+									"  pm.expect(responseData.user.email).to.exist.and.to.be.a('string')\r",
+									"    .and.to.have.lengthOf.at.least(1, \"Email should not be empty\")\r",
+									"    .to.eq(\"demo@demo.com\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{registerUserName}}\", \r\n    \"password\": \"{{registerPassword}}\",\r\n    \"fullName\": \"Vardenis Pavardenis\",\r\n    \"email\": \"demo@demo.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check user exist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const variableUserName = pm.collectionVariables.get(\"registerUserName\");\r",
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"// Test for response body schema and properties\r",
+									"pm.test(\"Response body has the expected properties\", function () {\r",
+									"    pm.expect(responseData).to.have.property('username');\r",
+									"    pm.expect(responseData.username).to.exist.and.to.be.a('string')\r",
+									"        .and.to.have.lengthOf.at.least(1, \"Username should not be empty\")\r",
+									"        .to.equal(variableUserName);\r",
+									"\r",
+									"    pm.expect(responseData).to.have.property('fullName');\r",
+									"    pm.expect(responseData.fullName).to.exist.and.to.be.a('string')\r",
+									"        .and.to.have.lengthOf.at.least(1, \"FullName should not be empty\")\r",
+									"        .to.equal(\"Vardenis Pavardenis\");\r",
+									"\r",
+									"    pm.expect(responseData).to.have.property('email');\r",
+									"    pm.expect(responseData.email).to.exist.and.to.be.a('string')\r",
+									"        .and.to.have.lengthOf.at.least(1, \"Email should not be empty\")\r",
+									"        .to.equal(\"demo@demo.com\");\r",
+									"});\r",
+									"\r",
+									"// Test for response headers\r",
+									"pm.test(\"Content-Type header is present and has a specific value\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/user/{{registerUserName}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"{{registerUserName}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Login",
+			"item": [
+				{
+					"name": "Create new user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const variableUserName = pm.collectionVariables.get(\"registerLoginUserName\");\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"\r",
+									"  pm.expect(responseData).to.be.an('object');\r",
+									"  pm.expect(responseData.message).to.exist.and.to.be.a('string')\r",
+									"    .to.equal(\"User registered successfully\");\r",
+									"\r",
+									"  pm.expect(responseData.user).to.exist.and.to.be.an('object');\r",
+									"  \r",
+									"  pm.expect(responseData.user.username).to.exist.and.to.be.a('string')\r",
+									"    .and.to.have.lengthOf.at.least(1, \"Username should not be empty\")\r",
+									"    .to.equal(variableUserName);\r",
+									"\r",
+									"  pm.expect(responseData.user.fullName).to.exist.and.to.be.a('string')\r",
+									"    .and.to.have.lengthOf.at.least(1, \"Full name should not be empty\")\r",
+									"    .to.equal(\"Vardenis Pavardenis\");\r",
+									"\r",
+									"  pm.expect(responseData.user.email).to.exist.and.to.be.a('string')\r",
+									"    .and.to.have.lengthOf.at.least(1, \"Email should not be empty\")\r",
+									"    .to.eq(\"demo@demo.com\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate a unique username  by appending a timestamp\r",
+									"const uniqueUsername = \"test_user_\" + Date.now();\r",
+									"// Generate a unique password  by appending a timestamp\r",
+									"const uniquePassword = \"psw\" + Date.now();\r",
+									"\r",
+									"pm.collectionVariables.set(\"registerLoginUserName\", uniqueUsername)\r",
+									"pm.collectionVariables.set(\"registerLoginPassword\", uniquePassword)\r",
+									"\r",
+									"// Just print in order to check if we got value of variables by name:\r",
+									"// console.log(pm.collectionVariables.get(\"registerLoginUserName\"))\r",
+									"// console.log(pm.collectionVariables.get(\"registerLoginPassword\"))"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{registerLoginUserName}}\",\r\n    \"password\": \"{{registerLoginPassword}}\",\r\n    \"fullName\": \"Vardenis Pavardenis\",\r\n    \"email\": \"demo@demo.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login with valid data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const variableUserName = pm.collectionVariables.get(\"registerLoginUserName\");\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"\r",
+									"  pm.expect(responseData.message).to.exist.and.to.be.a('string')\r",
+									"    .to.equal(\"Login successful\");\r",
+									"\r",
+									"  pm.expect(responseData.user).to.exist.and.to.be.an('object');\r",
+									"  \r",
+									"  pm.expect(responseData.user.username).to.exist.and.to.be.a('string')\r",
+									"    .and.to.have.lengthOf.at.least(1, \"Username should not be empty\")\r",
+									"    .to.equal(variableUserName);\r",
+									"\r",
+									"  pm.expect(responseData.user.fullName).to.exist.and.to.be.a('string')\r",
+									"    .and.to.have.lengthOf.at.least(1, \"Full name should not be empty\")\r",
+									"    .to.equal(\"Vardenis Pavardenis\");\r",
+									"\r",
+									"  pm.expect(responseData.user.email).to.exist.and.to.be.a('string')\r",
+									"    .and.to.have.lengthOf.at.least(1, \"Email should not be empty\")\r",
+									"    .to.eq(\"demo@demo.com\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{registerLoginUserName}}\",\r\n    \"password\": \"{{registerLoginPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login - no username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Validate response properties, types, and values\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.have.property(\"error\");\r",
+									"    pm.expect(responseData.error).to.be.a('string');\r",
+									"    pm.expect(responseData.error).to.equal(\"Invalid username or password\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"{{registerLoginPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login - no password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const variableUserName = pm.collectionVariables.get(\"registerLoginUserName\");\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Validate response properties, types, and values\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.have.property(\"error\");\r",
+									"    pm.expect(responseData.error).to.be.a('string');\r",
+									"    pm.expect(responseData.error).to.equal(\"Invalid username or password\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"username\": \"{{registerLoginUserName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login - empty username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Validate response properties, types, and values\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.have.property(\"error\");\r",
+									"    pm.expect(responseData.error).to.be.a('string');\r",
+									"    pm.expect(responseData.error).to.equal(\"Invalid username or password\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"\",\r\n    \"password\": \"{{registerLoginPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login - empty password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Validate response properties, types, and values\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.have.property(\"error\");\r",
+									"    pm.expect(responseData.error).to.be.a('string');\r",
+									"    pm.expect(responseData.error).to.equal(\"Invalid username or password\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{registerLoginUserName}}\",\r\n    \"password\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login - empty all parameters",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Validate response properties, types, and values\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.have.property(\"error\");\r",
+									"    pm.expect(responseData.error).to.be.a('string');\r",
+									"    pm.expect(responseData.error).to.equal(\"Invalid username or password\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"\",\r\n    \"password\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Get  User detail",
+			"item": [
+				{
+					"name": "Create new user to Get",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate a unique username  by appending a timestamp\r",
+									"const uniqueUsername = \"test_user_\" + Date.now();\r",
+									"// Generate a unique password  by appending a timestamp\r",
+									"const uniquePassword = \"psw\" + Date.now();\r",
+									"\r",
+									"pm.collectionVariables.set(\"registerGetUserName\", uniqueUsername)\r",
+									"pm.collectionVariables.set(\"registerGetPassword\", uniquePassword)\r",
+									"\r",
+									"// Just print in order to check if we got value of variables by name:\r",
+									"// console.log(pm.collectionVariables.get(\"registerLoginUserName\"))\r",
+									"// console.log(pm.collectionVariables.get(\"registerLoginPassword\"))"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const variableUserName = pm.collectionVariables.get(\"registerGetUserName\");\r",
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"\r",
+									"  pm.expect(responseData).to.be.an('object');\r",
+									"  pm.expect(responseData.message).to.exist.and.to.be.a('string')\r",
+									"    .to.equal(\"User registered successfully\");\r",
+									"\r",
+									"  pm.expect(responseData.user).to.exist.and.to.be.an('object');\r",
+									"  \r",
+									"  pm.expect(responseData.user.username).to.exist.and.to.be.a('string')\r",
+									"    .and.to.have.lengthOf.at.least(1, \"Username should not be empty\")\r",
+									"    .to.equal(variableUserName);\r",
+									"\r",
+									"  pm.expect(responseData.user.fullName).to.exist.and.to.be.a('string')\r",
+									"    .and.to.have.lengthOf.at.least(1, \"Full name should not be empty\")\r",
+									"    .to.equal(\"Vardenis Pavardenis\");\r",
+									"\r",
+									"  pm.expect(responseData.user.email).to.exist.and.to.be.a('string')\r",
+									"    .and.to.have.lengthOf.at.least(1, \"Email should not be empty\")\r",
+									"    .to.eq(\"demo@demo.com\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{registerGetUserName}}\", \r\n    \"password\": \"{{registerGetPassword}}\",\r\n    \"fullName\": \"Vardenis Pavardenis\",\r\n    \"email\": \"demo@demo.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create new user",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"{{registerGetUserName}}\", \r\n    \"password\": \"{{registerGetPassword}}\",\r\n    \"fullName\": \"Vardenis Pavardenis\",\r\n    \"email\": \"demo@demo.com\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"register"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "145"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"91-hGUp1T20pahCp8PhJ+2Rfcf/H7M\""
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 13 Feb 2025 09:15:11 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User registered successfully\",\n    \"user\": {\n        \"username\": \"test_user_1739438111702\",\n        \"fullName\": \"Vardenis Pavardenis\",\n        \"email\": \"demo@demo.com\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Positive user details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const variableUserName = pm.collectionVariables.get(\"registerGetUserName\");\r",
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"// Test for status code\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Test for response time\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"// Test for response body schema and properties\r",
+									"pm.test(\"Response body has the expected properties\", function () {\r",
+									"    pm.expect(responseData).to.have.property('username');\r",
+									"    pm.expect(responseData.username).to.exist.and.to.be.a('string')\r",
+									"        .and.to.have.lengthOf.at.least(1, \"Username should not be empty\")\r",
+									"        .to.equal(variableUserName);\r",
+									"\r",
+									"    pm.expect(responseData).to.have.property('fullName');\r",
+									"    pm.expect(responseData.fullName).to.exist.and.to.be.a('string')\r",
+									"        .and.to.have.lengthOf.at.least(1, \"FullName should not be empty\")\r",
+									"        .to.equal(\"Vardenis Pavardenis\");\r",
+									"\r",
+									"    pm.expect(responseData).to.have.property('email');\r",
+									"    pm.expect(responseData.email).to.exist.and.to.be.a('string')\r",
+									"        .and.to.have.lengthOf.at.least(1, \"Email should not be empty\")\r",
+									"        .to.equal(\"demo@demo.com\");\r",
+									"});\r",
+									"\r",
+									"// Test for response headers\r",
+									"pm.test(\"Content-Type header is present and has a specific value\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/user/{{registerGetUserName}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"{{registerGetUserName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Negative non-existing user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate a unique non-extisting username  by appending a timestamp\r",
+									"const uniqueUsername = \"non-exiting_user_\" + Date.now();\r",
+									"\r",
+									"pm.collectionVariables.set(\"registerGetNenExitstingUserName\", uniqueUsername)\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"// Test for status code\r",
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"// Test for response time\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"// Test for response body schema and properties\r",
+									"pm.test(\"Response body has the expected property and value\", function () {\r",
+									"    pm.expect(responseData).to.have.property('error');\r",
+									"\r",
+									"    pm.expect(responseData.error).to.exist.and.to.be.a('string')\r",
+									"        .and.to.have.lengthOf.at.least(1, \"Username should not be empty\")\r",
+									"        .to.equal(\"User not found\");\r",
+									"});\r",
+									"\r",
+									"// Test for response headers\r",
+									"pm.test(\"Content-Type header is present and has a specific value\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/user/{{registerGetNenExitstingUserName}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"{{registerGetNenExitstingUserName}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Create new user with existing username",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"test_user_01\", \r\n    \"password\": \"lkdf987adsf\",\r\n    \"fullName\": \"Vardenis Pavardenis\",\r\n    \"email\": \"demo@deom.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Negative new user without username",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"password\": \"lkdf987adsf\",\r\n    \"fullName\": \"Vardenis Pavardenis\",\r\n    \"email\": \"demo@deom.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Negative new user without password Copy",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"test_user_01\", \r\n    \"fullName\": \"Vardenis Pavardenis\",\r\n    \"email\": \"demo@deom.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "registerLoginUserName",
+			"value": ""
+		},
+		{
+			"key": "registerLoginPassword",
+			"value": ""
+		},
+		{
+			"key": "registerGetUserName",
+			"value": ""
+		},
+		{
+			"key": "registerGetPassword",
+			"value": ""
+		},
+		{
+			"key": "registerGetNenExitstingUserName",
+			"value": ""
+		},
+		{
+			"key": "registerUserName",
+			"value": ""
+		},
+		{
+			"key": "registerPassword",
+			"value": ""
+		}
+	]
+}
