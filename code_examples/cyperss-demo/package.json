@@ -1,0 +1,17 @@
+{
+  "name": "cyperss-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "cy:ui": "cypress open",
+    "cy:cli": "cypress run --browser chrome"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cypress": "^14.1.0"
+  }
+}
